@@ -3,15 +3,15 @@ const router = express.Router();
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
-// Register a new user
+// Register a new user without requiring a role
 router.post('/register', async (req, res) => {
-    const { name, email, password, role } = req.body;
-    if (!name || !email || !password || !role) {
-        return res.status(400).json({ message: 'All fields are required.' });
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: 'Name, email and password are required.' });
     }
     try {
         const hash = await bcrypt.hash(password, 10);
-        db.query('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)', [name, email, hash, role], (err, result) => {
+        db.query('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)', [name, email, hash, 'student'], (err, result) => {
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
                     return res.status(409).json({ message: 'Email already exists.' });

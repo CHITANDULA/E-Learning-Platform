@@ -54,11 +54,14 @@ router.post('/login', async (req, res) => {
 });
 
 // =================== REGISTER ===================
+// Any user can register without specifying a role. A token and basic
+// user info are returned so the frontend can immediately create a
+// dashboard instance for the new account.
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ message: 'All fields are required.' });
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email and password are required.' });
     }
 
     // Check if user already exists
@@ -70,13 +73,22 @@ router.post('/register', async (req, res) => {
     // Hash the password
     const password_hash = await bcrypt.hash(password, 10);
 
-    // Insert new user
-    await query(
+    // Insert new user with a default role. The role is kept for
+    // backwards compatibility but is no longer used for permissions.
+    const result = await query(
       'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
-      [name, email, password_hash, role]
+      [name, email, password_hash, 'student']
     );
 
-    res.status(201).json({ message: 'Registration successful! You can now log in.' });
+    const userId = result.insertId;
+    const token = jwt.sign({ user_id: userId }, process.env.JWT_SECRET, {
+      expiresIn: '1h'
+    });
+
+    res.status(201).json({
+      token,
+      user: { user_id: userId, name, email }
+    });
   } catch (err) {
     console.error('Register error:', err);
     res.status(500).json({ message: 'Server error', error: err });

@@ -17,15 +17,31 @@
     </header>
 
     <main>
-        <h2 id="welcomeMessage">Welcome, Student!</h2>
+        <h2 id="welcomeMessage">Welcome!</h2>
 
-        <div class="dashboard-grid">
-            <div class="card">My Classes</div>
-            <div class="card">Announcements</div>
-            <div class="card">Upcoming tasks and deadlines</div>
-        </div>
+        <section>
+            <h3>Create Class</h3>
+            <form id="createClassForm">
+                <input type="text" id="classTitle" placeholder="Class title" required>
+                <input type="text" id="classDescription" placeholder="Description">
+                <button type="submit">Create</button>
+            </form>
+        </section>
+
+        <section>
+            <h3>Join Class</h3>
+            <form id="joinClassForm">
+                <input type="text" id="inviteCode" placeholder="Invite code" required>
+                <button type="submit">Join</button>
+            </form>
+        </section>
+
+        <section>
+            <h3>My Classes</h3>
+            <ul id="classList"></ul>
+        </section>
     </main>
 
-    <script src="js/main.js"></script>
+    <script src="../assets/js/main.js"></script>
 </body>
 </html>

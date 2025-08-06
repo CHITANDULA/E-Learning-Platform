@@ -52,11 +52,32 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
     isValid = false;
   }
 
-  // If everything is valid, show message then redirect after 4s
+  // If everything is valid, send registration to backend
   if (isValid) {
-    successMessage.textContent = 'Account created! Redirecting to login…';
-    setTimeout(() => {
-      window.location.href = 'login.html';
-    }, 4000); // 4000ms = 4 seconds
+    fetch('http://localhost:5000/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: username.value.trim(),
+        email: email.value.trim(),
+        password: pwd
+      })
+    })
+      .then(res => res.json().then(data => ({ status: res.status, body: data })))
+      .then(({ status, body }) => {
+        if (status >= 400) throw new Error(body.message || 'Registration failed');
+        // Save token and user info so each user gets their own dashboard instance
+        if (body.token) {
+          localStorage.setItem('userToken', body.token);
+        }
+        if (body.user) {
+          localStorage.setItem('userInfo', JSON.stringify(body.user));
+        }
+        window.location.href = 'dashboard.html';
+      })
+      .catch(err => {
+        successMessage.textContent = err.message;
+        successMessage.style.color = 'red';
+      });
   }
 });
