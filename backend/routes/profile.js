@@ -29,7 +29,7 @@ function authenticateToken(req, res, next) {
 
 // Get profile of authenticated user
 router.get('/', authenticateToken, (req, res) => {
-    db.query('SELECT user_id, name, email, role, created_at FROM users WHERE user_id = ?', [req.user.user_id], (err, results) => {
+    db.query('SELECT user_id, name, email, created_at FROM users WHERE user_id = ?', [req.user.user_id], (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error', error: err });
         if (results.length === 0) return res.status(404).json({ message: 'User not found.' });
         res.json(results[0]);
