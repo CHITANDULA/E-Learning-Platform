@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('classesContainer');
   const annContainer = document.getElementById('announcementsContainer');
   const tasksContainer = document.getElementById('tasksContainer');
+  const statCourses = document.getElementById('statCourses');
+  const statCompleted = document.getElementById('statCompleted');
+  const statPending = document.getElementById('statPending');
   const modal = document.getElementById('classModal');
   const modalTitle = document.getElementById('modalTitle');
   const modalDescription = document.getElementById('modalDescription');
@@ -50,6 +53,24 @@ document.addEventListener('DOMContentLoaded', () => {
       alert(err.message);
     }
   });
+
+  async function loadStats() {
+    if (!statCourses && !statCompleted && !statPending) return;
+    try {
+      const res = await fetch('/api/analytics/dashboard', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to load stats');
+      if (statCourses) statCourses.textContent = data.enrolledCourses;
+      if (statCompleted) statCompleted.textContent = data.completedTasks;
+      if (statPending) statPending.textContent = data.pendingTasks;
+    } catch (_) {
+      if (statCourses) statCourses.textContent = '0';
+      if (statCompleted) statCompleted.textContent = '0';
+      if (statPending) statPending.textContent = '0';
+    }
+  }
 
   async function loadClasses() {
     container.innerHTML = '';
@@ -275,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadClasses();
+  loadStats();
 
   const logout = document.getElementById('logout');
   if (logout) {
