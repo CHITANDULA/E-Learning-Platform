@@ -1,9 +1,10 @@
 /* General Page Styling */
 :root {
-    --primary-color: #1f2937;
-    --accent-color: #f59e0b;
-    --accent-color-dark: #d97706;
-    --bg-color: #f4f6f9;
+    --primary-color: #2e2e68;
+    --accent-color: #6366f1;
+    --accent-color-dark: #4f46e5;
+    --accent-light: #818cf8;
+    --bg-color: #f8fafc;
 }
 
 body {
@@ -22,7 +23,7 @@ body {
 
 .sidebar {
     width: 220px;
-    background: var(--primary-color);
+    background: linear-gradient(180deg, var(--primary-color), var(--accent-color-dark));
     color: white;
     display: flex;
     flex-direction: column;
@@ -42,15 +43,16 @@ body {
 }
 
 .sidebar-nav a {
-    color: #9ca3af;
+    color: #e2e8f0;
     padding: 12px 20px;
     text-decoration: none;
     font-weight: 500;
+    transition: background 0.3s, color 0.3s;
 }
 
 .sidebar-nav a.active,
 .sidebar-nav a:hover {
-    background-color: #374151;
+    background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
 }
 
@@ -69,8 +71,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fff;
-    color: var(--primary-color);
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color-dark));
+    color: #fff;
     padding: 15px 30px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
@@ -81,13 +83,14 @@ body {
 }
 
 .header-actions a {
-    color: var(--primary-color);
+    color: #fff;
     margin-left: 15px;
     text-decoration: none;
+    transition: color 0.3s;
 }
 
 .header-actions a:hover {
-    color: var(--accent-color);
+    color: var(--accent-light);
 }
 
 /* Main Content */
@@ -120,14 +123,14 @@ h2 {
     text-align: center;
     font-weight: bold;
     font-size: 1.1rem;
-    border-top: 4px solid var(--accent-color); /* Accent orange */
+    border-top: 4px solid var(--accent-color);
     border: 1px solid #e5e7eb;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .card h3 {
@@ -171,13 +174,19 @@ h2 {
 }
 
 .stat-card {
-    background: var(--accent-color);
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-color-dark));
     color: #fff;
     padding: 20px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .stat-card i {
@@ -200,7 +209,7 @@ button {
     padding: 12px 24px;
     margin: 10px 10px 10px 0;
     border: none;
-    background-color: var(--accent-color); /* Accent orange */
+    background-color: var(--accent-color); /* Accent color */
     color: white;
     font-size: 16px;
     font-weight: bold;
@@ -210,7 +219,7 @@ button {
 }
 
 button:hover {
-    background-color: var(--accent-color-dark); /* Darker orange */
+    background-color: var(--accent-color-dark); /* Darker accent */
 }
 
 /* Classes list styling */
