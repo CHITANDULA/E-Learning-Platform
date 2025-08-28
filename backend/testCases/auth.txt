@@ -1,0 +1,116 @@
+{
+  "login": [
+    {
+      "id": "L-01",
+      "description": "Login with valid credentials",
+      "input": { "email": "validEmail", "password": "correctPassword" },
+      "expected": { "status": 200, "body": { "token": "string", "user": { "user_id": "number", "name": "string", "email": "string", "dashboard_id": "number" } } }
+    },
+    {
+      "id": "L-02",
+      "description": "Login with missing email",
+      "input": { "password": "pass123" },
+      "expected": { "status": 400, "body": { "message": "Email and password are required." } }
+    },
+    {
+      "id": "L-03",
+      "description": "Login with missing password",
+      "input": { "email": "validEmail" },
+      "expected": { "status": 400, "body": { "message": "Email and password are required." } }
+    },
+    {
+      "id": "L-04",
+      "description": "Login with non-existent email",
+      "input": { "email": "not@found.com", "password": "any" },
+      "expected": { "status": 401, "body": { "message": "Invalid credentials." } }
+    },
+    {
+      "id": "L-05",
+      "description": "Login with wrong password",
+      "input": { "email": "validEmail", "password": "wrongPass" },
+      "expected": { "status": 401, "body": { "message": "Invalid credentials." } }
+    },
+    {
+      "id": "L-06",
+      "description": "Login with DB error",
+      "input": { "email": "validEmail", "password": "correctPassword" },
+      "expected": { "status": 500, "body": { "message": "Server error" } }
+    },
+    {
+      "id": "L-07",
+      "description": "Login then reuse expired token",
+      "input": { "email": "validEmail", "password": "correctPassword" },
+      "expected": { "status": 403, "body": { "message": "Invalid token." } }
+    }
+  ],
+  "register": [
+    {
+      "id": "R-01",
+      "description": "Register new user successfully",
+      "input": { "name": "John", "email": "john@test.com", "password": "123456" },
+      "expected": { "status": 201, "body": { "message": "Registration successful! You can now log in." } }
+    },
+    {
+      "id": "R-02",
+      "description": "Register with missing name",
+      "input": { "email": "john@test.com", "password": "123456" },
+      "expected": { "status": 400, "body": { "message": "All fields are required." } }
+    },
+    {
+      "id": "R-03",
+      "description": "Register with missing email",
+      "input": { "name": "John", "password": "123456" },
+      "expected": { "status": 400, "body": { "message": "All fields are required." } }
+    },
+    {
+      "id": "R-04",
+      "description": "Register with missing password",
+      "input": { "name": "John", "email": "john@test.com" },
+      "expected": { "status": 400, "body": { "message": "All fields are required." } }
+    },
+    {
+      "id": "R-05",
+      "description": "Register with existing email",
+      "input": { "name": "Jane", "email": "validEmail", "password": "newpass" },
+      "expected": { "status": 409, "body": { "message": "Email already in use." } }
+    },
+    {
+      "id": "R-06",
+      "description": "Register with DB error",
+      "input": { "name": "John", "email": "db@error.com", "password": "123456" },
+      "expected": { "status": 500, "body": { "message": "Server error" } }
+    },
+    {
+      "id": "R-07",
+      "description": "Dashboard is created on registration",
+      "input": { "name": "John", "email": "john2@test.com", "password": "123456" },
+      "expected": { "status": 201, "body": { "message": "Registration successful! You can now log in." }, "dbCheck": { "table": "dashboards", "relation": "user_id" } }
+    }
+  ],
+  "logout": [
+    {
+      "id": "LO-01",
+      "description": "Logout with valid token",
+      "headers": { "Authorization": "Bearer validToken" },
+      "expected": { "status": 200, "body": { "message": "Logged out successfully." } }
+    },
+    {
+      "id": "LO-02",
+      "description": "Logout without token",
+      "headers": {},
+      "expected": { "status": 401, "body": { "message": "No token provided." } }
+    },
+    {
+      "id": "LO-03",
+      "description": "Logout with malformed token",
+      "headers": { "Authorization": "Bearer invalidToken" },
+      "expected": { "status": 403, "body": { "message": "Invalid token." } }
+    },
+    {
+      "id": "LO-04",
+      "description": "Logout with expired token",
+      "headers": { "Authorization": "Bearer expiredToken" },
+      "expected": { "status": 403, "body": { "message": "Invalid token." } }
+    }
+  ]
+}
