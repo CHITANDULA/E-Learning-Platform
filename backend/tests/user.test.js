@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../server'); // make sure server.js exports Express app
+const app = require('../app'); 
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
