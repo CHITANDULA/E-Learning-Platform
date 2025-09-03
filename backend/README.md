@@ -1,3 +1,5 @@
+# E-Learning Platform Backend
+
 This is the backend API for the E-Learning Platform web application.  
 Built with Node.js, Express.js, and MySQL.
 
@@ -5,71 +7,182 @@ Built with Node.js, Express.js, and MySQL.
 
 - Node.js (v14 or above recommended)
 - MySQL installed locally or access to a remote MySQL database
+- Google Cloud Platform account (for Google Meet integration)
 
 ## Installation
 
 1. Clone the repository:
-
+```bash
 git clone https://github.com/GraceMonde/E-Learning-Platform
 cd E-Learning-Platform/backend
+```
 
 2. Install dependencies:
-
+```bash
 npm install
+```
 
 3. Create a `.env` file:
-
-Copy the sample environment file and update it with your own credentials:
-
 ```bash
 cp .env.example .env
 ```
 
-4. Configure your `.env` file:
+4. Configure your `.env` file with:
+- Database credentials
+- JWT secret
+- Google service account details (for Meet integration)
+- Port number
 
-Open `.env` and fill in your database credentials, JWT secret, and Google service account details.
+## Environment Variables
 
-## Example .env
+```bash
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
 DB_NAME=elearning_platform
-JWT_SECRET=d4a4f5dcf23b1d6dfc4b37f57d445fc2fb28a2ba55ac52dcc564777e108689b1
+JWT_SECRET=your-secret-key
 GOOGLE_CLIENT_EMAIL=your-service-account@project.iam.gserviceaccount.com
-# newline characters in the private key must be escaped as \\n
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\nYOUR_PRIVATE_KEY\\n-----END PRIVATE KEY-----\\n"
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n"
 PORT=5000
+```
 
-## Project File Structure
+## Project Structure
 
 ```
 backend/
 ├── config/
-│   └── db.js              # MySQL connection setup
+│   ├── db.js              # MySQL connection setup
+│   └── googleMeet.js      # Google Meet integration
+├── models/
+│   └── lectureStore.js    # Lecture data models
 ├── routes/
-│   ├── user.js            # User registration and listing
-│   ├── auth.js            # Authentication (login)
-│   └── profile.js         # User profile (protected)
-├── E-LearningDB.sql.sql   # Database schema
-├── server.js              # Main Express server
-├── package.json           # Node.js dependencies
-├── package-lock.json      # Dependency lock file
-└── README.md              # Project documentation
+│   ├── analytics.js       # Analytics endpoints
+│   ├── announcements.js   # Announcement management
+│   ├── assignments.js     # Assignment handling
+│   ├── auth.js           # Authentication
+│   ├── classes.js        # Class management
+│   ├── lectures.js       # Lecture scheduling
+│   ├── materials.js      # Learning materials
+│   ├── notifications.js  # User notifications
+│   ├── profile.js        # User profiles
+│   ├── threads.js        # Discussion threads
+│   └── user.js           # User management
+├── tests/
+│   ├── auth.test.js      # Authentication tests
+│   ├── profile.test.js   # Profile tests
+│   └── user.test.js      # User tests
+├── E-LearningDB.sql      # Database schema
+├── server.js             # Main Express server
+└── package.json          # Dependencies
 ```
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
+
+### User Profile
+- `GET /api/profile` - Get user profile
+- `PUT /api/profile` - Update profile
+- `PUT /api/profile/password` - Change password
+
+### Classes
+- `GET /api/classes` - List all classes
+- `POST /api/classes` - Create new class
+- `GET /api/classes/:id` - Get class details
+- `PUT /api/classes/:id` - Update class
+- `DELETE /api/classes/:id` - Delete class
+
+### Lectures
+- `GET /api/lectures` - List lectures
+- `POST /api/lectures` - Schedule new lecture
+- `GET /api/lectures/:id` - Get lecture details
+
+### Assignments
+- `GET /api/assignments` - List assignments
+- `POST /api/assignments` - Create assignment
+- `PUT /api/assignments/:id` - Update assignment
+- `DELETE /api/assignments/:id` - Delete assignment
+
+### Materials
+- `GET /api/materials` - List learning materials
+- `POST /api/materials` - Upload material
+- `GET /api/materials/:id` - Download material
 
 ## Running the Server
 
-Start the development server with:
-
+Development mode:
+```bash
 npm run dev
+```
 
-The server will start on `http://localhost:5000` (or the port you set in `.env`).
+Production mode:
+```bash
+npm start
+```
 
-## Profile Endpoints
+The server will start on `http://localhost:5000` (or the port specified in `.env`).
 
-Authenticated users can manage their profile using the following routes:
+## Testing
 
-- `GET /api/profile` – retrieve the current user's profile information.
-- `PUT /api/profile` – update name and/or email of the current user.
-- `PUT /api/profile/password` – change the password after providing the current one.
+Run the test suite:
+```bash
+npm test
+```
+
+## Google Meet Integration
+
+### Setup
+
+1. **Google Cloud Console Setup**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Create a new project or select existing one
+   - Enable the Google Calendar API and Google Meet API
+   - Create a service account
+   - Download the service account key (JSON)
+
+2. **Environment Configuration**:
+   - Extract the client email and private key from the JSON file
+   - Add them to your `.env` file:
+   ```bash
+   GOOGLE_CLIENT_EMAIL=your-service-account@project.iam.gserviceaccount.com
+   GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n"
+   ```
+
+### Available Endpoints
+
+- `POST /api/lectures/meet` - Create a new Google Meet session
+  ```json
+  {
+    "summary": "Math Class - Algebra",
+    "startTime": "2025-09-03T14:00:00Z"
+  }
+  ```
+  Response:
+  ```json
+  {
+    "id": "meeting-id",
+    "meetLink": "https://meet.google.com/xxx-yyyy-zzz"
+  }
+  ```
+
+### Features
+- Automatic Google Meet link generation
+- Calendar integration for scheduled sessions
+- Fallback to mock links in development
+- 60-minute default meeting duration
+- Unique meeting IDs for each session
+
+### Error Handling
+- Graceful fallback if Google credentials are missing
+- Automatic token refresh
+- Clear error messages for troubleshooting
+
+### Development Notes
+- Test mode generates mock meeting links
+- Real Google Meet integration only works with proper credentials
+- Meeting links are valid for 24 hours after creation
+
+For more details about the implementation, check `config/googleMeet.js`.
 
