@@ -29,9 +29,7 @@ describe('User Routes', () => {
       });
 
       // Mock db.query insert for dashboards
-      db.query.mockImplementationOnce((query, params, cb) => {
-        cb(null, { affectedRows: 1 });
-      });
+      db.query.mockImplementationOnce(() => {});
 
       const res = await request(app).post('/api/user/register').send({
         name: 'Test User',

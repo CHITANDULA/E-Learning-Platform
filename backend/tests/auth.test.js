@@ -23,9 +23,10 @@ describe('Auth Routes', () => {
     });
 
     it('should register a new user', async () => {
-  db.query.mockImplementationOnce((q, params, cb) => {
-    cb(null, { insertId: 1 });
-  });
+  db.query
+    .mockImplementationOnce((q, params, cb) => { cb(null, []); })
+    .mockImplementationOnce((q, params, cb) => { cb(null, { insertId: 1 }); })
+    .mockImplementationOnce((q, params, cb) => { cb(null, { affectedRows: 1 }); });
 
   const res = await request(app).post('/api/auth/register').send({
     name: 'User',
@@ -35,7 +36,9 @@ describe('Auth Routes', () => {
 
   expect(res.statusCode).toBe(201);
   expect(res.body.message).toBe('Registration successful! You can now log in.');
-});
+  });
+
+  });
 
   describe('POST /api/auth/login', () => {
     it('should return 401 if email not found', async () => {

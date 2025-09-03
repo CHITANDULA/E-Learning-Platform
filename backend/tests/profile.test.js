@@ -1,6 +1,7 @@
 const request = require("supertest");
 const express = require("express");
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+process.env.JWT_SECRET = 'testsecret';
 
 // Import the router
 const profileRouter = require("../routes/profile");
@@ -113,3 +114,4 @@ describe("Profile Routes", () => {
   expect(res.body.message).toBe("User not found.");
 });
 });
+
