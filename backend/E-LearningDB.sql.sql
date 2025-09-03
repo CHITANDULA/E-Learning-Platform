@@ -1,6 +1,6 @@
 
 -- USERS TABLE
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(100) UNIQUE NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE users (
 );
 
 -- DASHBOARDS TABLE
-CREATE TABLE dashboards (
+CREATE TABLE IF NOT EXISTS dashboards (
   dashboard_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT UNIQUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -17,7 +17,7 @@ CREATE TABLE dashboards (
 );
 
 -- CLASSES TABLE
-CREATE TABLE classes (
+CREATE TABLE IF NOT EXISTS classes (
   class_id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255),
   description TEXT,
@@ -28,7 +28,7 @@ CREATE TABLE classes (
 );
 
 -- ENROLLMENTS TABLE
-CREATE TABLE enrollments (
+CREATE TABLE IF NOT EXISTS enrollments (
   enrollment_id INT AUTO_INCREMENT PRIMARY KEY,
   class_id INT,
   student_id INT,
@@ -39,7 +39,7 @@ CREATE TABLE enrollments (
 );
 
 -- COURSE MATERIALS
-CREATE TABLE materials (
+CREATE TABLE IF NOT EXISTS materials (
   material_id INT AUTO_INCREMENT PRIMARY KEY,
   class_id INT,
   title VARCHAR(255),
@@ -53,7 +53,7 @@ CREATE TABLE materials (
 );
 
 -- ASSIGNMENTS
-CREATE TABLE assignments (
+CREATE TABLE IF NOT EXISTS assignments (
   assignment_id INT AUTO_INCREMENT PRIMARY KEY,
   class_id INT,
   title VARCHAR(255),
@@ -65,7 +65,7 @@ CREATE TABLE assignments (
 );
 
 -- SUBMISSIONS
-CREATE TABLE submissions (
+CREATE TABLE IF NOT EXISTS submissions (
   submission_id INT AUTO_INCREMENT PRIMARY KEY,
   assignment_id INT,
   student_id INT,
@@ -76,7 +76,7 @@ CREATE TABLE submissions (
 );
 
 -- GRADES
-CREATE TABLE grades (
+CREATE TABLE IF NOT EXISTS grades (
   grade_id INT AUTO_INCREMENT PRIMARY KEY,
   submission_id INT,
   score DECIMAL(5,2),
@@ -88,7 +88,7 @@ CREATE TABLE grades (
 );
 
 -- ANNOUNCEMENTS
-CREATE TABLE announcements (
+CREATE TABLE IF NOT EXISTS announcements (
   announcement_id INT AUTO_INCREMENT PRIMARY KEY,
   class_id INT,
   message TEXT,
@@ -99,7 +99,7 @@ CREATE TABLE announcements (
 );
 
 -- DISCUSSION THREADS
-CREATE TABLE threads (
+CREATE TABLE IF NOT EXISTS threads (
   thread_id INT AUTO_INCREMENT PRIMARY KEY,
   class_id INT,
   created_by INT,
@@ -111,7 +111,7 @@ CREATE TABLE threads (
 );
 
 -- COMMENTS
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
   comment_id INT AUTO_INCREMENT PRIMARY KEY,
   thread_id INT,
   posted_by INT,
@@ -122,7 +122,7 @@ CREATE TABLE comments (
 );
 
 -- NOTIFICATIONS
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
   notification_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT,
   message TEXT,
@@ -132,7 +132,7 @@ CREATE TABLE notifications (
 );
 
 -- LIVE LECTURES
-CREATE TABLE live_lectures (
+CREATE TABLE IF NOT EXISTS live_lectures (
   lecture_id INT AUTO_INCREMENT PRIMARY KEY,
   class_id INT,
   scheduled_by INT,
