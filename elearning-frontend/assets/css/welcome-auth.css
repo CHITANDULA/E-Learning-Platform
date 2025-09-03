@@ -1,0 +1,269 @@
+/* Welcome page authentication styles */
+.hero {
+  background: url('../img/hero-bg.jpg') center/cover no-repeat;
+  padding: 80px 0 60px 0;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(35, 47, 62, 0.7);
+  z-index: 1;
+}
+
+.hero .container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+/* Tab Navigation */
+.auth-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px 8px 0 0;
+  padding: 4px;
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+  background: #ff9900;
+  color: #232f3e;
+}
+
+.tab-btn:hover:not(.active) {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Form Container */
+.auth-form-container {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.auth-form-container.hidden {
+  display: none;
+}
+
+.form-card {
+  background: #fff;
+  padding: 40px 35px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.form-card h2 {
+  font-size: 1.8rem;
+  color: #232f3e;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.form-card p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 30px;
+}
+
+/* Form Groups */
+.form-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #232f3e;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #dcdfe6;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #ff9900;
+  box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.1);
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+/* Error Messages */
+.error {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.875rem;
+  color: #e53e3e;
+  min-height: 1.2em;
+}
+
+.error-message {
+  color: #e53e3e;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.success-message {
+  color: #10b981;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Buttons */
+button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  background-color: #ff9900;
+  color: #232f3e;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+  background-color: #d97706;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+button[type="submit"].loading {
+  background-color: #f59e0b;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+button[type="submit"].success {
+  background-color: #10b981;
+  color: #fff;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Loader */
+.loader {
+  display: none;
+  margin: 15px auto;
+  width: 28px;
+  height: 28px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #ff9900;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 800px) {
+  .hero {
+    padding: 40px 0 30px 0;
+    min-height: 70vh;
+  }
+  
+  .auth-container {
+    max-width: 95vw;
+    margin: 0 10px;
+  }
+  
+  .form-card {
+    padding: 30px 25px;
+  }
+  
+  .form-card h2 {
+    font-size: 1.5rem;
+  }
+  
+  .tab-btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-card {
+    padding: 25px 20px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+  }
+  
+  button[type="submit"] {
+    padding: 12px;
+  }
+}

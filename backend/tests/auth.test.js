@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../app');
+const app = require('../server');
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -23,20 +23,19 @@ describe('Auth Routes', () => {
     });
 
     it('should register a new user', async () => {
-      db.query.mockImplementationOnce((q, params, cb) => {
-        cb(null, { insertId: 1 });
-      });
-
-      const res = await request(app).post('/api/auth/register').send({
-        name: 'User',
-        email: 'new@test.com',
-        password: '123456',
-      });
-
-      expect(res.statusCode).toBe(201);
-      expect(res.body.message).toBe('User registered successfully');
-    });
+  db.query.mockImplementationOnce((q, params, cb) => {
+    cb(null, { insertId: 1 });
   });
+
+  const res = await request(app).post('/api/auth/register').send({
+    name: 'User',
+    email: 'new@test.com',
+    password: '123456',
+  });
+
+  expect(res.statusCode).toBe(201);
+  expect(res.body.message).toBe('Registration successful! You can now log in.');
+});
 
   describe('POST /api/auth/login', () => {
     it('should return 401 if email not found', async () => {

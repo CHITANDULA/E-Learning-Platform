@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../app'); // make sure app.js exports Express app
+const app = require('../server'); // make sure server.js exports Express app
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
@@ -13,9 +13,9 @@ describe('User Routes', () => {
     jest.clearAllMocks();
   });
 
-  describe('POST /api/users/register', () => {
+  describe('POST /api/user/register', () => {
     it('should return 400 if fields are missing', async () => {
-      const res = await request(app).post('/api/users/register').send({ email: 'a@test.com' });
+      const res = await request(app).post('/api/user/register').send({ email: 'a@test.com' });
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('All fields are required.');
     });
@@ -33,7 +33,7 @@ describe('User Routes', () => {
         cb(null, { affectedRows: 1 });
       });
 
-      const res = await request(app).post('/api/users/register').send({
+      const res = await request(app).post('/api/user/register').send({
         name: 'Test User',
         email: 'test@example.com',
         password: '123456',
@@ -50,7 +50,7 @@ describe('User Routes', () => {
         cb(err, null);
       });
 
-      const res = await request(app).post('/api/users/register').send({
+      const res = await request(app).post('/api/user/register').send({
         name: 'Test',
         email: 'exists@example.com',
         password: '123456',
@@ -61,7 +61,7 @@ describe('User Routes', () => {
     });
   });
 
-  describe('GET /api/users', () => {
+  describe('GET /api/user', () => {
     it('should return list of users', async () => {
       const users = [
         { user_id: 1, name: 'A', email: 'a@test.com', created_at: '2025-08-28' },
@@ -69,7 +69,7 @@ describe('User Routes', () => {
 
       db.query.mockImplementationOnce((query, cb) => cb(null, users));
 
-      const res = await request(app).get('/api/users');
+      const res = await request(app).get('/api/user');
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toEqual(users);

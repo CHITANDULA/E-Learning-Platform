@@ -52,18 +52,17 @@ describe("Profile Routes", () => {
   });
 
   it("should return profile if user exists", async () => {
-    db.query.mockImplementationOnce((sql, params, callback) => {
-      callback(null, [{ user_id: 1, name: "Alice", email: "alice@test.com", created_at: "2024-01-01" }]);
-    });
-
-    const res = await request(app)
-      .get("/profile")
-      .set("Authorization", `Bearer ${token}`);
-
-    expect(res.status).toBe(200);
-    expect(res.body.email).toBe("alice@test.com");
+  db.query.mockImplementationOnce((sql, params, callback) => {
+    callback(null, [{ user_id: 1, name: "Alice", email: "alice@test.com", created_at: "2024-01-01" }]);
   });
 
+  const res = await request(app)
+    .get("/profile")
+    .set("Authorization", `Bearer ${token}`);
+
+  expect(res.status).toBe(200);
+  expect(res.body.email).toBe("alice@test.com");
+});
   // -------- PUT /profile --------
   it("should return 400 if no fields provided for update", async () => {
     const res = await request(app)
@@ -76,16 +75,18 @@ describe("Profile Routes", () => {
   });
 
   it("should update profile successfully", async () => {
-    db.query.mockImplementationOnce((sql, params) => Promise.resolve());
-
-    const res = await request(app)
-      .put("/profile")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ name: "Updated Name" });
-
-    expect(res.status).toBe(200);
-    expect(res.body.message).toBe("Profile updated successfully.");
+  db.query.mockImplementationOnce((sql, params, callback) => {
+    callback(null, { affectedRows: 1 }); // Simulate successful update
   });
+
+  const res = await request(app)
+    .put("/profile")
+    .set("Authorization", `Bearer ${token}`)
+    .send({ name: "Updated Name" });
+
+  expect(res.status).toBe(200);
+  expect(res.body.message).toBe("Profile updated successfully.");
+});
 
   // -------- PUT /profile/password --------
   it("should return 400 if missing current/new password", async () => {
@@ -99,14 +100,16 @@ describe("Profile Routes", () => {
   });
 
   it("should return 404 if user not found for password change", async () => {
-    db.query.mockImplementationOnce((sql, params) => Promise.resolve([]));
-
-    const res = await request(app)
-      .put("/profile/password")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ currentPassword: "oldpass", newPassword: "newpass" });
-
-    expect(res.status).toBe(404);
-    expect(res.body.message).toBe("User not found.");
+  db.query.mockImplementationOnce((sql, params, callback) => {
+    callback(null, []); // empty result
   });
+
+  const res = await request(app)
+    .put("/profile/password")
+    .set("Authorization", `Bearer ${token}`)
+    .send({ currentPassword: "oldpass", newPassword: "newpass" });
+
+  expect(res.status).toBe(404);
+  expect(res.body.message).toBe("User not found.");
+});
 });
