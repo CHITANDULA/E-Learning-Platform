@@ -7,28 +7,31 @@ const profileRouter = require("../routes/profile");
 
 // Mock DB
 jest.mock("../config/db", () => ({
-  query: jest.fn((sql, params, callback) => {
-    callback(null, []);
-  })
+  query: jest.fn(),
 }));
 const db = require("../config/db");
 
+// Mock JWT
+jest.mock("jsonwebtoken", () => ({
+  sign: jest.fn(),
+  verify: jest.fn(),
+}));
+
 const app = express();
 app.use(express.json());
-
-// Attach routes
 app.use("/profile", profileRouter);
 
-// Helper to generate JWT
-function generateToken(user_id = 1) {
-  return jwt.sign({ user_id }, process.env.JWT_SECRET || "testsecret", { expiresIn: "1h" });
-}
+// Helper token
+const token = "fake-token";
 
 describe("Profile Routes", () => {
-  let token;
+  beforeEach(() => {
+    // Mock jwt.verify to always succeed
+    jwt.verify.mockImplementation((token, secret, cb) => cb(null, { user_id: 1 }));
+  });
 
-  beforeAll(() => {
-    token = generateToken(1);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   // -------- GET /profile --------
@@ -39,9 +42,7 @@ describe("Profile Routes", () => {
   });
 
   it("should return 404 if user not found", async () => {
-    db.query.mockImplementationOnce((sql, params, callback) => {
-      callback(null, []); // simulate empty result
-    });
+    db.query.mockImplementationOnce((sql, params, cb) => cb(null, []));
 
     const res = await request(app)
       .get("/profile")
@@ -52,17 +53,18 @@ describe("Profile Routes", () => {
   });
 
   it("should return profile if user exists", async () => {
-  db.query.mockImplementationOnce((sql, params, callback) => {
-    callback(null, [{ user_id: 1, name: "Alice", email: "alice@test.com", created_at: "2024-01-01" }]);
+    db.query.mockImplementationOnce((sql, params, cb) =>
+      cb(null, [{ user_id: 1, name: "Alice", email: "alice@test.com", created_at: "2024-01-01" }])
+    );
+
+    const res = await request(app)
+      .get("/profile")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.email).toBe("alice@test.com");
   });
 
-  const res = await request(app)
-    .get("/profile")
-    .set("Authorization", `Bearer ${token}`);
-
-  expect(res.status).toBe(200);
-  expect(res.body.email).toBe("alice@test.com");
-});
   // -------- PUT /profile --------
   it("should return 400 if no fields provided for update", async () => {
     const res = await request(app)
@@ -75,18 +77,16 @@ describe("Profile Routes", () => {
   });
 
   it("should update profile successfully", async () => {
-  db.query.mockImplementationOnce((sql, params, callback) => {
-    callback(null, { affectedRows: 1 }); // Simulate successful update
+    db.query.mockImplementationOnce((sql, params, cb) => cb(null, { affectedRows: 1 }));
+
+    const res = await request(app)
+      .put("/profile")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ name: "Updated Name" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe("Profile updated successfully.");
   });
-
-  const res = await request(app)
-    .put("/profile")
-    .set("Authorization", `Bearer ${token}`)
-    .send({ name: "Updated Name" });
-
-  expect(res.status).toBe(200);
-  expect(res.body.message).toBe("Profile updated successfully.");
-});
 
   // -------- PUT /profile/password --------
   it("should return 400 if missing current/new password", async () => {
@@ -100,16 +100,31 @@ describe("Profile Routes", () => {
   });
 
   it("should return 404 if user not found for password change", async () => {
-  db.query.mockImplementationOnce((sql, params, callback) => {
-    callback(null, []); // empty result
+    db.query.mockImplementationOnce((sql, params, cb) => cb(null, []));
+
+    const res = await request(app)
+      .put("/profile/password")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ currentPassword: "oldpass", newPassword: "newpass" });
+
+    expect(res.status).toBe(404);
+    expect(res.body.message).toBe("User not found.");
   });
 
-  const res = await request(app)
-    .put("/profile/password")
-    .set("Authorization", `Bearer ${token}`)
-    .send({ currentPassword: "oldpass", newPassword: "newpass" });
+  it("should change password successfully if correct current password", async () => {
+    const hashed = await require("bcrypt").hash("oldpass", 10);
 
-  expect(res.status).toBe(404);
-  expect(res.body.message).toBe("User not found.");
-});
+    db.query.mockImplementation((sql, params, cb) => {
+      if (sql.startsWith("SELECT")) cb(null, [{ password_hash: hashed }]);
+      else if (sql.startsWith("UPDATE")) cb(null, { affectedRows: 1 });
+    });
+
+    const res = await request(app)
+      .put("/profile/password")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ currentPassword: "oldpass", newPassword: "newpass" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe("Password changed successfully.");
+  });
 });
