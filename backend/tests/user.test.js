@@ -67,7 +67,8 @@ describe('User Routes', () => {
         { user_id: 1, name: 'A', email: 'a@test.com', created_at: '2025-08-28' },
       ];
 
-      db.query.mockImplementationOnce((query, cb) => cb(null, users));
+      // db.query in user route uses a callback with signature (sql, params, cb)
+      db.query.mockImplementationOnce((query, params, cb) => cb(null, users));
 
       const res = await request(app).get('/api/user');
 
